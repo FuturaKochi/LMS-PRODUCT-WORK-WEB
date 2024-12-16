@@ -9,7 +9,7 @@ import Student from './Pages/Student/Student'
 import Createstudent from './Pages/CreateStudent/Createstudent'
 import CreateBatch from './Pages/Batches/Createbatch'
 import UpdateBatch from './Pages/Batches/UpdateBatch'
-
+import Chatbox from './Pages/Chat/Chatbox'
 
 
 function App() {
@@ -27,6 +27,7 @@ function App() {
       <Route path='/createbatch' element={<CreateBatch />} />
       <Route path='/updatebatch/:id' element={<UpdateBatch />} />
       <Route path='/createstudent' element={<Createstudent />} />
+      <Route path='/chat' element={<Chatbox />} />
 
    </>
   ))

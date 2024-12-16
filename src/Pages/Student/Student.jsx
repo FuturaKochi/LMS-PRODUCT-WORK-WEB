@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { styled,keyframes } from 'styled-components'
 import Loading from '../../Component/Loading'
 import Navbar1 from '../../Component/Navbar1'
-import { Batch, students, studentswithId } from '../../Api call/Api'
+import { Batch, Mentor, students, studentsPost, studentswithId } from '../../Api call/Api'
 
 const DropDown = styled(MDBDropdownToggle)`
    font-family: "Space Grotesk", sans-serif;
@@ -135,6 +135,47 @@ const Remove=styled(MDBDropdownToggle)`
   text-align: center;
 `
 
+const Indication=styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: end;
+`
+const Active=styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: green;
+  /* margin-right: 30px; */
+  margin: 7px;
+`
+const NonActive=styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: red;
+  /* margin-right: 30px; */
+  margin: 7px;
+`
+const Compleate=styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: blue;
+  /* margin-right: 30px; */
+  margin: 7px;
+`
+const Indicationname=styled.div`
+  font-family: "Space Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight:100; /* Default weight can be set here */
+  font-style: normal;
+  font-size: 14px;
+`
+const MDBDropdownMenus=styled(MDBDropdownMenu)`
+  height: 100px;
+  overflow-x: scroll;
+`
+
 const Student = () => {
   const [StudentDetails, setStudentDetails] = useState([]);
   const [StudentDetails1, setStudentDetails1] = useState([]);
@@ -145,6 +186,31 @@ const Student = () => {
   const [updateModal, setupdatedModal] = useState(false);
   const [activestatus,setActiveStatus]=useState('All')
   const [batch_code, setBatch_code] = useState([])
+  const [mentor,setMentor]=useState([])
+  const [uploadData,setUploadData]=useState({
+    firstName:"",
+    lastName:"",
+    email:"",
+    mobileNumber:"",
+    profilePicture:"",
+    enrollmentNumber:"",
+    dateOfBirth:Date,
+    gender:"",
+    courseName:"",
+    courseDuration:Number,
+    joiningDate:Date,
+    street:"",
+    city:"",
+    district:"",
+    state:"",
+    country:"",
+    pinCode:""
+  })
+  const [dropdownvalue,setDropdownValue]=useState({
+    modeOfClass:"",
+    mentor:"",
+    status:"",
+  })
   const toggleOpen = (id) => {
     console.log("where is id", id);
     setCentredModal(!centredModal);
@@ -172,6 +238,9 @@ const Student = () => {
         setStudentDetails1(data);
         setLoading(false);
       }).catch(() => setLoading(false));
+      Mentor().then((data)=>{   
+setMentor(data)
+      })
 
   }, []);
 
@@ -203,6 +272,27 @@ if(value=='all'){
       setBatch_code(data)
     })
   }, [StudentDetails])
+
+
+
+  //value take in input tag
+
+   function updateData(event){
+const {value,name}=event.target
+setUploadData({...uploadData,[name]:value})
+console.log("values in input btag in student details",uploadData);
+
+}
+
+function submitForm(){
+  console.log("final answer in form in update registration",{...uploadData,dropdownvalue});
+  studentsPost({...updateData,dropdownvalue})
+  
+}
+
+
+
+
 
 return (
   <MDBContainer fluid>
@@ -255,13 +345,20 @@ return (
           </Titles>
           <Titles>
             <MDBIcon fas icon="headset" size='sm' />
-            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#411B66", margin: "3px" }} to={'/#'}>Chat</Link>
+            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#411B66", margin: "3px" }} to={'/chat'}>Chat</Link>
           </Titles>
         </Rightside2>
 
       </Navsection2>
     {/* Rest of your UI */}
-
+<Indication>
+  <Indicationname>Active</Indicationname>
+ <Active></Active>
+ <Indicationname>Inactive</Indicationname>
+ <NonActive></NonActive>
+ <Indicationname>Course compleate</Indicationname>
+ <Compleate></Compleate>
+</Indication>
     <TableView className='container'>
       <MDBTable align='middle'>
         <MDBTableHead>
@@ -292,14 +389,14 @@ return (
                     className='rounded-circle'
                   />
                   <div className='ms-3'>
-                    <p className='fw-bold mb-1'>{li.first_name} {li.last_name}</p>
+                    <p className='fw-bold mb-1'>{li.firstName} {li.lastName}</p>
                     <p className='text-muted mb-0'>{li.email}</p>
-                    <p className='text-muted mb-0'>{li.student_id}</p>
+                    <p className='text-muted mb-0'>{li.studentId}</p>
                   </div>
                 </div>
               </StudentDetailTablecolumn>
               <StudentDetailTablecolumn>
-                <p className='fw-normal mb-1'>{li.phone_number}</p>
+                <p className='fw-normal mb-1'>{li.mobileNumber}</p>
               </StudentDetailTablecolumn>
               <StudentDetailTablecolumn>
                 <p className='fw-normal mb-1'>10/05/2024</p>
@@ -317,7 +414,7 @@ return (
                       </MDBDropdownToggle>
                       <MDBDropdownMenu style={{ maxHeight: '200px', overflowY: 'auto' }}>
                         {batch_code.map((li) => (
-                          <MDBDropdownItem link>{li.batch_code}</MDBDropdownItem>
+                          <MDBDropdownItem link>{li.batchCode}</MDBDropdownItem>
                         ))}
                       </MDBDropdownMenu>
 
@@ -344,16 +441,16 @@ return (
                           <MDBCard>
                             <Mdbcartimage style={{ width: '200px', height: '200px' }} position='top' alt='...' src='https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg' />
                             <MDBCardBody>
-                              <MDBCardTitle>{singleStudentData.first_name} {singleStudentData.last_name}</MDBCardTitle>
+                              <MDBCardTitle>{singleStudentData.firstName} {singleStudentData.lastName}</MDBCardTitle>
                               <MDBCardText>
                                 {singleStudentData.email}<br />
-                                {singleStudentData.phone_number}
+                                {singleStudentData.phoneNumber}
                               </MDBCardText>
                             </MDBCardBody>
                             <MDBListGroup flush>
                               <MDBListGroupItem>status            : {singleStudentData.status}</MDBListGroupItem>
-                              <MDBListGroupItem>student Id        : {singleStudentData.student_id}</MDBListGroupItem>
-                              <MDBListGroupItem>enrollment_number : {singleStudentData.enrollment_number}</MDBListGroupItem>
+                              <MDBListGroupItem>student Id        : {singleStudentData.studentId}</MDBListGroupItem>
+                              <MDBListGroupItem>enrollment_number : {singleStudentData.enrollmentNumber}</MDBListGroupItem>
                             </MDBListGroup>
                           </MDBCard>
                        
@@ -385,51 +482,56 @@ return (
 
         <MDBCardBody className='px-4'>
           <h3 className="fw-bold mb-4 pb-2 pb-md-0 mb-md-5">Update Registration Form</h3>
-
           <MDBRow>
-            <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='First Name' size='lg' id='form1' type='text'/>
-            </MDBCol>
-
-            <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Last Name' size='lg' id='form2' type='text'/>
+          <MDBCol md='6'>
+              <MDBInput wrapperClass='mb-4' label='Enrollment Number'  size='lg' id='form1' type='text' name="enrollmentNumber"  onChange={updateData}/>
             </MDBCol>
           </MDBRow>
 
           <MDBRow>
             <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Date of birth' size='lg' id='form3' type='date'/>
+              <MDBInput wrapperClass='mb-4' label='First Name'  size='lg' id='form1' type='text' name="firstName"  onChange={updateData}/>
+            </MDBCol>
+
+            <MDBCol md='6'>
+              <MDBInput wrapperClass='mb-4' label='Last Name' size='lg' id='form2' type='text' name="lastName"  onChange={updateData}/>
+            </MDBCol>
+          </MDBRow>
+
+          <MDBRow>
+            <MDBCol md='6'>
+              <MDBInput wrapperClass='mb-4' label='Date of birth' size='lg' id='form3' type='date' name='dateOfBirth'  onChange={updateData}/>
             </MDBCol>
 
             <MDBCol md='6' className='mb-4'>
               <h6 className="fw-bold">Gender: </h6>
-              <MDBRadio name='inlineRadio' id='inlineRadio1' value='option1' label='Female' inline />
-              <MDBRadio name='inlineRadio' id='inlineRadio2' value='option2' label='Male' inline />
-              <MDBRadio name='inlineRadio' id='inlineRadio3' value='option3' label='Other' inline />
+              <MDBRadio name='gender' id='inlineRadio1' value='Femal' label='Female' inline  onClick={updateData}/>
+              <MDBRadio name='gender' id='inlineRadio2' value='Male' label='Male' inline  onClick={updateData}/>
+              <MDBRadio name='gender' id='inlineRadio3' value='Other' label='Other' inline  onClick={updateData}/>
             </MDBCol>
           </MDBRow>
 
           <MDBRow>
             <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Email' size='lg' id='form4' type='email'/>
+              <MDBInput wrapperClass='mb-4' label='Email' size='lg' id='form4' type='email' name="email"  onChange={updateData}/>
             </MDBCol>
 
             <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Phone Number' size='lg' id='form5' type='rel'/>
+              <MDBInput wrapperClass='mb-4' label='Phone Number' size='lg' id='form5' type='rel' name="mobileNumber"  onChange={updateData}/>
             </MDBCol>
           </MDBRow>
           <MDBRow>
             <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Joining Date' size='lg' id='form4' type='date'/>
+              <MDBInput wrapperClass='mb-4' label='Joining Date' size='lg' id='form4' type='date' name='joiningDate'  onChange={updateData}/>
             </MDBCol>
 
             <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Duration' size='lg' id='form5' type='text'/>
+              <MDBInput wrapperClass='mb-4' label='Course Duration' size='lg' id='form5' type='number' name='courseDuration' onChange={updateData}/>
             </MDBCol>
           </MDBRow>
           <MDBRow>
             <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Course' size='lg' id='form4' type='Course'/>
+              <MDBInput wrapperClass='mb-4' label='Course Name' size='lg' id='form4' type='text' name='courseName' onChange={updateData}/>
             </MDBCol>
 
             <MDBCol md='6'>
@@ -439,29 +541,90 @@ return (
             </MDBDropdownToggle>
             <MDBDropdownMenu>
           
-                  <MDBDropdownItem link >Active</MDBDropdownItem>
-                  <MDBDropdownItem link >Inactive</MDBDropdownItem>
+                  <MDBDropdownItem  onClick={()=>setDropdownValue({status:"active"})}>Active</MDBDropdownItem>
+                  <MDBDropdownItem  onClick={()=>setDropdownValue({status:'inactive'})}>Inactive</MDBDropdownItem>
+                  <MDBDropdownItem  onClick={()=>setDropdownValue({status:"course compleated"})}>Course compleated</MDBDropdownItem>
              
           
             </MDBDropdownMenu>
           </MDBDropdown>
             </MDBCol>
           </MDBRow>
+          <MDBRow>
+            <MDBCol md='6'>
+          <MDBDropdown>
+            <MDBDropdownToggle style={{ fontSize: '12px', fontFamily: 'Arial, sans-serif' }} className='text-dark  bg-transparent border-0 mt-3 py-2 px-4 shadow-none border'>
+               Mode of classes
+            </MDBDropdownToggle>
+            <MDBDropdownMenu>
+          
+                  <MDBDropdownItem  onClick={()=>setDropdownValue({modeOfClass:'online'})}>online</MDBDropdownItem>
+                  <MDBDropdownItem   onClick={()=>setDropdownValue({modeOfClass:'offline'})} >offline</MDBDropdownItem>
+             
+             
+          
+            </MDBDropdownMenu>
+          </MDBDropdown>
+          </MDBCol>
+          <MDBCol md='6'>
+          <MDBDropdown>
+            <MDBDropdownToggle style={{ fontSize: '12px', fontFamily: 'Arial, sans-serif' }} className='text-dark  bg-transparent border-0 mt-3 py-2 px-4 shadow-none border'>
+               Mentor
+            </MDBDropdownToggle>
+            <MDBDropdownMenus>
+          {mentor.map((li)=>(
+   <MDBDropdownItem  onClick={()=>setDropdownValue({mentor:li.firstName+" "+li.lastName})} >{li.firstName+" "+li.lastName}</MDBDropdownItem>
+          ))}
+               
+           
+             
+        
+            </MDBDropdownMenus>
+          </MDBDropdown>
+          </MDBCol>
+
+          </MDBRow>
 
           <MDBRow>
   <MDBTextArea
     wrapperClass='mb-4'
-    label='Your Message'
+    label='Your Address'
     id='textAreaExample'
-    rows={4} // Number of visible rows
+    // rows={6} // Number of visible rows
     placeholder='Address'
-  />
+  >
+    <MDBRow>
+    <MDBCol md='6'>
+              <MDBInput wrapperClass='mb-4' label='country' size='lg' id='form2' type='text' name="country"  onChange={updateData}/>
+            </MDBCol>
+    <MDBCol md='6'>
+              <MDBInput wrapperClass='mb-4' label='state' size='lg' id='form2' type='text' name="state"  onChange={updateData}/>
+            </MDBCol>
+    </MDBRow>
+    <MDBRow>
+    <MDBCol md='6'>
+              <MDBInput wrapperClass='mb-4' label='district' size='lg' id='form2' type='text' name="district"  onChange={updateData}/>
+            </MDBCol>
+    <MDBCol md='6'>
+              <MDBInput wrapperClass='mb-4' label='city' size='lg' id='form2' type='text' name="city"  onChange={updateData}/>
+            </MDBCol>
+    </MDBRow>
+    <MDBRow>
+    <MDBCol md='6'>
+              <MDBInput wrapperClass='mb-4' label='street' size='lg' id='form2' type='text' name="street"  onChange={updateData}/>
+            </MDBCol>
+    <MDBCol md='6'>
+              <MDBInput wrapperClass='mb-4' label='pincode' size='lg' id='form2' type='text' name="pinCode"  onChange={updateData}/>
+            </MDBCol>
+    </MDBRow>
+ 
+  </MDBTextArea>
 </MDBRow>
 <MDBRow>
 <MDBInput wrapperClass='mb-4' size='lg' id='form4' type='file'/> 
 </MDBRow>
 <div className="d-flex justify-content-center">
-  <MDBBtn className='mb-4' size='sm' color='success'>Submit</MDBBtn>
+  <MDBBtn className='mb-4' size='sm' color='success' onClick={submitForm}>Submit</MDBBtn>
 </div>
 
 

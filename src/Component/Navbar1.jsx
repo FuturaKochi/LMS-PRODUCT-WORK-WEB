@@ -15,12 +15,13 @@ width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  padding: 10px;
   margin: 0;
 `
 
 const Image = styled.img`
-width: 4rem;
+width: 7rem;
+margin-right: 100px;
 
 `
 const Leftside = styled.div`
@@ -65,7 +66,7 @@ const Input = styled.input`
   &::placeholder {
     font-family: "Space Grotesk", sans-serif;
   font-optical-sizing: auto;
-  font-weight:400; /* Default weight can be set here */
+  font-weight:100; /* Default weight can be set here */
   font-style: normal;
   color: #411B66;
   
@@ -75,11 +76,11 @@ outline: none;
   }
 `
 const Searchbar = styled.div`
-  border: 2px solid #411B66;
+  border: .1px solid #411B66;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 50%;
+  width: 46.5%;
   border-radius: 25px;
   outline-color: #411B66;
  background-color: white;
@@ -92,6 +93,7 @@ const Searchbar = styled.div`
 const CustomIcon = styled(MDBIcon)`
   color:#411B66;
   margin: 0.5rem;
+  font-size:medium ;
 `;
 const Button = styled.div`
   padding: 3px;
@@ -105,10 +107,10 @@ const Button = styled.div`
 const SpaceGroteskText = styled.div`
   font-family: "Space Grotesk", sans-serif;
   font-optical-sizing: auto;
-  font-weight:400; /* Default weight can be set here */
+  font-weight:100; /* Default weight can be set here */
   font-style: normal;
-  color: white;
-  background-color: #411B66 ;
+  color: #000000;
+  /* background-color: #411B66 ; */
   cursor: pointer;
   padding: 5px;
   border-radius: 10px;
@@ -126,7 +128,7 @@ background-color: #6c0202 ;
 const Days=styled.h6`
     font-family: "Space Grotesk", sans-serif;
   font-optical-sizing: auto;
-  font-weight:700; /* Default weight can be set here */
+  font-weight:200; /* Default weight can be set here */
   font-style: normal;
   color: #411B66;
   @media (min-width: ${breakpoints.mobile}) and (max-width: ${breakpoints.tablet}) {
@@ -170,7 +172,8 @@ console.log("filtered students**",filteredStudents);
   return (
     <Navsection1>
     <Leftside>
-      <Image src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPgJPgAp_4zvcBBWIgWfIfbTo5qYymSC1T6djE5sijLRq2hGOfQpR-FOvac0cGcc_0vVc&usqp=CAU'></Image>
+      {/* <Image src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPgJPgAp_4zvcBBWIgWfIfbTo5qYymSC1T6djE5sijLRq2hGOfQpR-FOvac0cGcc_0vVc&usqp=CAU'></Image> */}
+      <Image src='./Logo/futura-labs logo.svg'></Image>
       <Searchbar>
         <Input type='search' placeholder='Search Mentor'   value={searchQuery}  onChange={handleSearch}></Input>
         <CustomIcon className='m-2 gray-icon' fas icon="search" size='lg' />
@@ -178,9 +181,9 @@ console.log("filtered students**",filteredStudents);
     </Leftside>
     <Rightside>
     <Days>{day}</Days>
-      <Button>
+      {/* <Button> */}
       <SpaceGroteskText>Logout</SpaceGroteskText>
-      </Button>
+      {/* </Button> */}
     </Rightside>
   </Navsection1>
   )

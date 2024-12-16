@@ -134,6 +134,21 @@ const Remove=styled(MDBDropdownToggle)`
   text-align: center;
 `
 
+function timeFormat(value){
+ 
+  const date = new Date(value);
+  
+  // Format the time in 12-hour clock with AM/PM
+  const formattedTime = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true, // Ensures 12-hour format
+  }).format(date);
+  
+  return formattedTime
+  
+    }
+
 const Singlebatch = () => {
   const [Batchdetails, setBatchdetails] = useState([]);
   const [StudentDetails, setStudentDetails] = useState([]);
@@ -156,6 +171,7 @@ const Singlebatch = () => {
       setLoading1(true)
       studentswithId(id).then((data) => {
 
+
         setsingleStudentData(data)
         setLoading1(false)
       })
@@ -177,7 +193,10 @@ const Singlebatch = () => {
         console.log("Batch with students", data);
 
         setBatchdetails(data)
-        setStudentDetails(data[0]?.student_details)
+     
+        
+        setStudentDetails(data[0]?.studentDetails)
+        console.log("student details ***************",StudentDetails);
         setLoading(false)
       })
 
@@ -208,7 +227,7 @@ const Singlebatch = () => {
           </MDBDropdown>
           <MDBDropdown>
             <MDBDropdownToggle style={{ fontSize: '12px', fontFamily: 'Arial, sans-serif', marginLeft: "20px" }} className='text-white  bg-transparent border-0 mt-3 py-2 px-4 shadow-none border'>
-              Change schedule time & date
+             Move Batch
             </MDBDropdownToggle>
             <MDBDropdownMenu>
               <MDBDropdown>
@@ -217,7 +236,7 @@ const Singlebatch = () => {
                 </MDBDropdownToggle>
                 <MDBDropdownMenu style={{ maxHeight: '200px', overflowY: 'auto' }}>
                   {batch_code.map((li) => (
-                    <MDBDropdownItem link>{li.batch_code}</MDBDropdownItem>
+                    <MDBDropdownItem link>{li.batchCode}</MDBDropdownItem>
                   ))}
                 </MDBDropdownMenu>
 
@@ -245,7 +264,7 @@ const Singlebatch = () => {
           </Titles>
           <Titles>
             <MDBIcon fas icon="headset" size='sm' />
-            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#411B66", margin: "3px" }} to={'/#'}>Chat</Link>
+            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#411B66", margin: "3px" }} to={'/chat'}>Chat</Link>
           </Titles>
         </Rightside2>
       </Navsection2>
@@ -262,13 +281,13 @@ const Singlebatch = () => {
           <MDBTableBody>
             {Batchdetails.map((li) => (
               <tr>
-                <BatchDetailTablecolumn scope='row'>{li.name}</BatchDetailTablecolumn>
+                <BatchDetailTablecolumn scope='row'>{li.batchName}</BatchDetailTablecolumn>
                 <BatchDetailTablecolumn>{li.mentor}</BatchDetailTablecolumn>
-                <BatchDetailTablecolumn>{li.start_time}</BatchDetailTablecolumn>
-                <BatchDetailTablecolumn>{li.end_time}</BatchDetailTablecolumn>
+                <BatchDetailTablecolumn>{timeFormat(li.startTime)}</BatchDetailTablecolumn>
+                <BatchDetailTablecolumn>{ timeFormat(li.endTime)}</BatchDetailTablecolumn>
               </tr>
             ))}
-          </MDBTableBody>
+          </MDBTableBody> 
         </MDBTable>
       </MDBContainer>
       <TableView className='container'>
@@ -303,14 +322,14 @@ const Singlebatch = () => {
                         className='rounded-circle'
                       />
                       <div className='ms-3'>
-                        <p className='fw-bold mb-1'>{li.first_name} {li.last_name}</p>
+                        <p className='fw-bold mb-1'>{li.firstName} {li.lastName}</p>
                         <p className='text-muted mb-0'>{li.email}</p>
-                        <p className='text-muted mb-0'>{li.student_id}</p>
+                        <p className='text-muted mb-0'>{li.studentId}</p>
                       </div>
                     </div>
                   </StudentDetailTablecolumn>
                   <StudentDetailTablecolumn>
-                    <p className='fw-normal mb-1'>{li.phone_number}</p>
+                    <p className='fw-normal mb-1'>{li.mobileNumber}</p>
                   </StudentDetailTablecolumn>
                   <StudentDetailTablecolumn>
                     <p className='fw-normal mb-1'>10/05/2024</p>
@@ -329,7 +348,7 @@ const Singlebatch = () => {
                       </MDBDropdownToggle>
                       <MDBDropdownMenu style={{ maxHeight: '200px', overflowY: 'auto' }}>
                         {batch_code.map((li) => (
-                          <MDBDropdownItem link>{li.batch_code}</MDBDropdownItem>
+                          <MDBDropdownItem link>{li.batchCode}</MDBDropdownItem>
                         ))}
                       </MDBDropdownMenu>
 
@@ -355,17 +374,17 @@ const Singlebatch = () => {
                                 <MDBCard>
                                   <Mdbcartimage alt='...' src='https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg' />
                                   <MDBCardBody>
-                                    <MDBCardTitle>{singleStudentData.first_name} {singleStudentData.last_name}</MDBCardTitle>
+                                    <MDBCardTitle>{singleStudentData.firstName} {singleStudentData.lastName}</MDBCardTitle>
 
                                     <MDBCardText>
                                       {singleStudentData.email}<br></br>
-                                      {singleStudentData.phone_number}
+                                      {singleStudentData.mobileNumber}
                                     </MDBCardText>
                                   </MDBCardBody>
                                   <MDBListGroup flush>
                                     <MDBListGroupItem>status            : {singleStudentData.status}</MDBListGroupItem>
-                                    <MDBListGroupItem>student Id        : {singleStudentData.student_id}</MDBListGroupItem>
-                                    <MDBListGroupItem>enrollment_number : {singleStudentData.enrollment_number}</MDBListGroupItem>
+                                    <MDBListGroupItem>student Id        : {singleStudentData.studentId}</MDBListGroupItem>
+                                    <MDBListGroupItem>enrollment_number : {singleStudentData.enrollmentNumber}</MDBListGroupItem>
                                   </MDBListGroup>
                                 </MDBCard>
                               </MDBModalBody>

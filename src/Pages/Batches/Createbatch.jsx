@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   MDBBtn,
   MDBContainer,
@@ -15,6 +15,7 @@ import {
 } from 'mdb-react-ui-kit';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { postBatch, searchWithcourse, searchWithMentor, searchWithstudent } from '../../Api call/Api';
 
 const NavSection = styled.div`
    display: flex;
@@ -82,47 +83,137 @@ const StyledDropdownToggle = styled(MDBDropdownToggle)`
   padding: 10px 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   margin-top: 1rem;
+
 `;
 
 const StyledDropdownItem = styled(MDBDropdownItem)`
   padding: 10px 15px;
   font-size: 14px;
   color: #333;
+ 
+  cursor: pointer;
+  &:hover{
+    background-color:gray ;
+  }
 `;
-const Mdbrow=styled(MDBCol)`
+const Mdbrow = styled(MDBCol)`
 display: flex;
 align-items: center;
 justify-content: space-between;
 `
 
+const MDBDropdownMenus = styled(MDBDropdownMenu)`
+height:250px ;
+overflow:scroll ;
+`
+
 const CreateBatch = () => {
+
+
+
+
+
+  const [searchResult, setSearchResult] = useState([])
+  const [studentId, setStudentId] = useState([])
+  const [courseDetails, setCourseDetails] = useState([])
+  const [days, setDays] = useState([])
+  const [day, setDay] = useState(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])
+  const [course, setCourse] = useState("")
+  const [mentors, setMentors] = useState([])
+  const [mentor, setMentor] = useState("")
+
+
+  const [data, setData] = useState({
+    batchName: "",
+    batchCode: "",
+    startDate: Date,
+    endDate: Date,
+    startTime: "",
+    endTime: "",
+
+  })
+
+  console.log("Id evide", studentId, days, course);
+
+  function searchStudent(event) {
+    const { value } = event.target
+    searchWithstudent(value).then((response) => {
+    
+      setSearchResult(response.data)
+    })
+  }
+
+  useEffect(() => {
+    searchWithcourse().then((data) => {
+      setCourseDetails(data.data)
+    })
+
+    searchWithMentor().then((data) => {
+      setMentors(data.data)
+   
+
+    })
+  }, [])
+
+
+  function onchange(event) {
+    const { name, value } = event.target
+ 
+
+    if (name == 'startTime' || name == 'endTime') {
+
+      const today = new Date();
+
+      // Split the time value into hours and minutes
+      const [hours, minutes] = value.split(":").map(Number);
+
+      // Set the hours and minutes of the Date object
+      today.setHours(hours, minutes, 0, 0);
+   
+      
+
+      setData({ ...data, [name]: today })
+    }else{
+    setData({ ...data, [name]: value })
+    }
+
+
+  }
+
+
+  function submit() {
+
+
+    postBatch({...data,day:days,mentor,students:studentId,courseName:course})
+  }
+
   return (
     <StyledContainer fluid>
       <NavSection>
         <LeftSide />
         <Rightside2>
 
-<Titles>
-  <MDBIcon fas icon="home" size='sm' />
-  <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/home'}>Home</Link>
-</Titles>
-<Titles>
-  <MDBIcon fas icon="graduation-cap" size='sm' />
-  <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/student'}>Student</Link>
-</Titles>
-<Titles>
-  <MDBIcon fas icon="book-reader" size='sm' />
-  <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/#'}>Mentor</Link>
-</Titles>
-<Titles>
-  <MDBIcon fas icon="users" size='sm' />
-  <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/batch'}>Batches</Link>
-</Titles>
-<Titles>
-  <MDBIcon fas icon="headset" size='sm' />
-  <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/#'}>Chat</Link>
-</Titles>
-</Rightside2>
+          <Titles>
+            <MDBIcon fas icon="home" size='sm' />
+            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/home'}>Home</Link>
+          </Titles>
+          <Titles>
+            <MDBIcon fas icon="graduation-cap" size='sm' />
+            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/student'}>Student</Link>
+          </Titles>
+          <Titles>
+            <MDBIcon fas icon="book-reader" size='sm' />
+            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/#'}>Mentor</Link>
+          </Titles>
+          <Titles>
+            <MDBIcon fas icon="users" size='sm' />
+            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/batch'}>Batches</Link>
+          </Titles>
+          <Titles>
+            <MDBIcon fas icon="headset" size='sm' />
+            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/chat'}>Chat</Link>
+          </Titles>
+        </Rightside2>
       </NavSection>
 
       <MDBRow className='justify-content-center align-items-center mx-3'>
@@ -132,69 +223,97 @@ const CreateBatch = () => {
               <h3 className="fw-bold text-center mb-4 pb-2 pb-md-0 mb-md-5">Create New Batch</h3>
               <MDBRow>
                 <MDBCol md='6'>
-                  <MDBInput wrapperClass='mb-4' label='Batch name' size='lg' id='form1' type='text' />
+                  <MDBInput wrapperClass='mb-4' label='Batch name' size='lg' id='form1' type='text' name='batchName' onChange={onchange} />
                 </MDBCol>
                 <MDBCol md='6'>
-                  <MDBInput wrapperClass='mb-4' label='Batch code' size='lg' id='form2' type='text' />
+                  <MDBInput wrapperClass='mb-4' label='Batch code' size='lg' id='form2' type='text' name='batchCode' onChange={onchange} />
                 </MDBCol>
               </MDBRow>
 
               <MDBRow>
                 <MDBCol md='6'>
-                  <MDBInput wrapperClass='mb-4' label='Batch starting date' size='lg' id='form3' type='date' />
+                  <MDBInput wrapperClass='mb-4' label='Batch starting date' size='lg' id='form3' type='date' name='startDate' onChange={onchange} />
                 </MDBCol>
                 <MDBCol md='6'>
-                  <MDBInput wrapperClass='mb-4' label='Batch ending date' size='lg' id='form4' type='date' />
+                  <MDBInput wrapperClass='mb-4' label='Batch ending date' size='lg' id='form4' type='date' name="endDate" onChange={onchange} />
                 </MDBCol>
               </MDBRow>
 
               <MDBRow>
                 <MDBCol md='6'>
                   <label htmlFor="form6" className="form-label">Batch starting time</label>
-                  <MDBInput wrapperClass='mb-4' size='lg' id='form6' type='time' />
+                  <MDBInput wrapperClass='mb-4' size='lg' id='form6' type='time' name='startTime' onChange={onchange} />
                 </MDBCol>
                 <MDBCol md='6'>
                   <label htmlFor="form7" className="form-label">Batch ending time</label>
-                  <MDBInput wrapperClass='mb-4' size='lg' id='form7' type='time' />
+                  <MDBInput wrapperClass='mb-4' size='lg' id='form7' type='time' name='endTime' onChange={onchange} />
                 </MDBCol>
               </MDBRow>
 
               <MDBRow>
                 <MDBCol md='6'>
-                  <MDBInput wrapperClass='mb-4' label='Mentor Name' size='lg' id='form8' type='text' />
+                  <MDBDropdown>
+                    <StyledDropdownToggle className="shadow-none">
+                      select Mentor
+                    </StyledDropdownToggle>
+                    <MDBDropdownMenus>
+                      {mentors.map((li) => (
+                        <StyledDropdownItem onClick={() => setMentor(li.firstName + " " + li.lastName)}>{li.firstName + " " + li.lastName}</StyledDropdownItem>
+                      ))}
+                    </MDBDropdownMenus>
+                  </MDBDropdown>
+
                 </MDBCol>
                 <MDBCol md='6'>
-                  <MDBInput wrapperClass='mb-4' label='Duration' size='lg' id='form9' type='text' />
+                  {/* <MDBInput wrapperClass='mb-4' label='Duration' size='lg' id='form9' type='text' /> */}
                 </MDBCol>
               </MDBRow>
-
               <Mdbrow>
-                <MDBCol md='3'>
+
+                <MDBCol md='2'>
+                  <MDBDropdown>
+                    <StyledDropdownToggle className="shadow-none">
+                      select Day
+                    </StyledDropdownToggle>
+                    <MDBDropdownMenu>
+                      {day.map((li) => (
+                        <StyledDropdownItem onClick={() => setDays([...days, li])}>{li}</StyledDropdownItem>
+                      ))}
+                    </MDBDropdownMenu>
+                  </MDBDropdown>
+
+                </MDBCol>
+                <MDBCol md='2'>
                   <MDBDropdown>
                     <StyledDropdownToggle className="shadow-none">
                       Add Course
                     </StyledDropdownToggle>
                     <MDBDropdownMenu>
-                      <StyledDropdownItem link>Active</StyledDropdownItem>
-                      <StyledDropdownItem link>Inactive</StyledDropdownItem>
+                      {courseDetails.map((li) => (
+                        <StyledDropdownItem onClick={() => setCourse(li.courseName)}>{li.courseName}</StyledDropdownItem>
+                      ))}
+
                     </MDBDropdownMenu>
                   </MDBDropdown>
                 </MDBCol>
-                <MDBCol md='3' >
+                <MDBCol md='2' >
                   <MDBDropdown>
                     <StyledDropdownToggle className="shadow-none">
                       Add Students
                     </StyledDropdownToggle>
                     <MDBDropdownMenu>
-                      <StyledDropdownItem link>Active</StyledDropdownItem>
-                      <StyledDropdownItem link>Inactive</StyledDropdownItem>
+                      <MDBInput wrapperClass='mb-4' label='Enter student name' size='lg' id='form9' type='search' onChange={searchStudent} />
+                      {searchResult.map((li) => (
+                        <StyledDropdownItem onClick={() => setStudentId([...studentId, li._id])}>{li.firstName + " " + li.lastName}</StyledDropdownItem>
+                      ))}
+
                     </MDBDropdownMenu>
                   </MDBDropdown>
                 </MDBCol>
               </Mdbrow>
 
               <div className="d-flex justify-content-center mt-4">
-                <MDBBtn className='mb-4' size='sm' color='success'>Submit</MDBBtn>
+                <MDBBtn className='m-5 w-50' size='sm' color='success' onClick={submit}>Submit</MDBBtn>
               </div>
             </MDBCardBody>
           </MDBCard>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     MDBBtn,
     MDBContainer,
@@ -9,15 +9,13 @@ import {
     MDBInput,
     MDBRadio,
     MDBDropdown,
-    MDBDropdownToggle,
-    MDBDropdownMenu,
-    MDBDropdownItem,
     MDBTextArea,
     MDBIcon
   }
   from 'mdb-react-ui-kit';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { studentsPost } from '../../Api call/Api';
 
 const Navsection2 = styled.div`
    display: flex;
@@ -74,6 +72,29 @@ const Mdbcontainer=styled(MDBContainer)`
 `
 
 const Createstudent = () => {
+
+  const [data,setData]=useState({
+  firstName:String,
+  lastName:String,
+  email:String,
+  password:String,
+  mobileNumber:String,
+  })
+
+  function handlechange(event){
+    const {name,value}=event.target
+
+    setData({...data,[name]:value})
+
+  }
+
+function display(){
+  console.log("check",data);
+  
+  studentsPost(data)
+}
+
+
   return (
 <Mdbcontainer fluid>
 <Navsection2>
@@ -99,7 +120,7 @@ const Createstudent = () => {
 </Titles>
 <Titles>
   <MDBIcon fas icon="headset" size='sm' />
-  <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/#'}>Chat</Link>
+  <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/chat'}>Chat</Link>
 </Titles>
 </Rightside2>
 
@@ -108,85 +129,35 @@ const Createstudent = () => {
     <MDBCol md='8' lg='6'> {/* Set the column size to control the card width */}
       <MDBCard>
         <MDBCardBody className='px-4'>
-          <h3 className="fw-bold mb-4 pb-2 pb-md-0 mb-md-5">Student Registration Form</h3>
+          <h3  className="fw-bold mb-4 pb-2 pb-md-0 mb-md-5 text-center">Student Registration Form</h3>
+
 
           <MDBRow>
             <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='First Name' size='lg' id='form1' type='text'/>
+              <MDBInput wrapperClass='mb-4' label='Firstname' name='firstName' size='lg' id='form4' type='text' onChange={handlechange}/>
             </MDBCol>
-
             <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Last Name' size='lg' id='form2' type='text'/>
+              <MDBInput wrapperClass='mb-4' label='Lastname' name='lastName' size='lg' id='form4' type='text' onChange={handlechange}/>
             </MDBCol>
-          </MDBRow>
-
+            </MDBRow>
           <MDBRow>
-            <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Date of birth' size='lg' id='form3' type='date'/>
+            <MDBCol md='12'>
+              <MDBInput wrapperClass='mb-4' label='Email' name='email' size='lg' id='form4' type='email' onChange={handlechange}/>
             </MDBCol>
-
-            <MDBCol md='6' className='mb-4'>
-              <h6 className="fw-bold">Gender: </h6>
-              <MDBRadio name='inlineRadio' id='inlineRadio1' value='option1' label='Female' inline />
-              <MDBRadio name='inlineRadio' id='inlineRadio2' value='option2' label='Male' inline />
-              <MDBRadio name='inlineRadio' id='inlineRadio3' value='option3' label='Other' inline />
+            </MDBRow>
+            <MDBRow>
+            <MDBCol md='12'>
+              <MDBInput wrapperClass='mb-4' name='mobileNumber' label='Phone Number' size='lg' id='form5' type='rel' onChange={handlechange}/>
             </MDBCol>
-          </MDBRow>
-
-          <MDBRow>
-            <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Email' size='lg' id='form4' type='email'/>
-            </MDBCol>
-
-            <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Phone Number' size='lg' id='form5' type='rel'/>
-            </MDBCol>
-          </MDBRow>
-          <MDBRow>
-            <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Joining Date' size='lg' id='form4' type='date'/>
-            </MDBCol>
-
-            <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Duration' size='lg' id='form5' type='text'/>
-            </MDBCol>
-          </MDBRow>
-          <MDBRow>
-            <MDBCol md='6'>
-              <MDBInput wrapperClass='mb-4' label='Course' size='lg' id='form4' type='Course'/>
-            </MDBCol>
-
-            <MDBCol md='6'>
-            <MDBDropdown>
-            <MDBDropdownToggle style={{ fontSize: '12px', fontFamily: 'Arial, sans-serif' }} className='text-dark  bg-transparent border-0 mt-3 py-2 px-4 shadow-none border'>
-               student status
-            </MDBDropdownToggle>
-            <MDBDropdownMenu>
           
-                  <MDBDropdownItem link >Active</MDBDropdownItem>
-                  <MDBDropdownItem link >Inactive</MDBDropdownItem>
-             
-          
-            </MDBDropdownMenu>
-          </MDBDropdown>
+            </MDBRow>
+          <MDBRow>
+            <MDBCol md='12'>
+              <MDBInput wrapperClass='mb-4' label='password' name="password" size='lg' id='form4' type='text' onChange={handlechange}/>
             </MDBCol>
           </MDBRow>
-
-<MDBRow>
-<MDBTextArea
-  wrapperClass='mb-4'
-  label='Your Message'
-  id='textAreaExample'
-  rows={4} // Number of visible rows
-  placeholder='Address'
-/>
-
-</MDBRow>
-<MDBRow>
-<MDBInput wrapperClass='mb-4' size='lg' id='form4' type='file'/> 
-</MDBRow>
 <div className="d-flex justify-content-center">
-  <MDBBtn className='mb-4' size='sm' color='success'>Submit</MDBBtn>
+  <MDBBtn className='mb-4' size='sm' color='success' onClick={display}>Submit</MDBBtn>
 </div>
 
 

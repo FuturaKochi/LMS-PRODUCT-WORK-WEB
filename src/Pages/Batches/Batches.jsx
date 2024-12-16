@@ -3,7 +3,7 @@ import Datepicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaCalendarAlt } from 'react-icons/fa'
-import { styled,keyframes, createGlobalStyle } from 'styled-components'
+import { styled, keyframes, createGlobalStyle } from 'styled-components'
 import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem, MDBIcon, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBBtn, MDBSpinner, MDBContainer, } from 'mdb-react-ui-kit';
 import axios from 'axios'
 import { Link } from 'react-router-dom';
@@ -50,9 +50,11 @@ const Navsection2 = styled.div`
 
 const Message = styled.div`
   width: 100%;
-  min-height: 100vh;
-  background: linear-gradient(135deg, rgba(65, 27, 102, 1), rgba(65, 27, 102, 0));
+  height: 83vh;
   padding: 1px;
+display: flex;
+flex-wrap: wrap;
+overflow: scroll;
 
 `
 
@@ -62,7 +64,7 @@ const Content = styled.div`
   gap:1rem;  
   width: 100%;
   white-space: nowrap; 
-  overflow-x: scroll; 
+  overflow-x: scroll;
   -ms-overflow-style: none; 
   scrollbar-width: none; 
   margin: 25px;
@@ -71,7 +73,7 @@ const Content = styled.div`
   }
   `
 const SubMain = styled.div`
-   min-width: 34%;
+ min-width: 450px;
 display: inline-block;
   text-align: center;
 `
@@ -82,6 +84,7 @@ const AnimatedCard = styled(MDBCard)`
   background: linear-gradient(135deg, #e5deeb, rgba(255, 255, 255, 1));
   margin-left: 45px;
   margin-right: 45px;
+  border-radius: 50px;
   &:hover {
     &::before {
       content: '';
@@ -215,6 +218,8 @@ const SpaceGroteskText = styled.div`
 `;
 
 
+
+
 function CustomInput({ value, onClick }) {
   return (
     <InputGroup>
@@ -229,19 +234,37 @@ function CustomInput({ value, onClick }) {
 }
 
 
+  //time format
 
+  function timeFormat(value){
+ 
+    const date = new Date(value);
+    
+    // Format the time in 12-hour clock with AM/PM
+    const formattedTime = new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true, // Ensures 12-hour format
+    }).format(date);
+    
+    return formattedTime
+    
+      }
 
 
 
 
 const Batches = () => {
 
+
+  
+
   const [demoDatas, setDemoDatas] = useState([]);
   const [demoDatas1, setDemoDatas1] = useState([]);
   const [selectedDate, setDate] = useState(null);
   const [day, setDay] = useState('');
   const [module, setModules] = useState([])
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
 
 
   // Get today's day when the component mounts
@@ -265,11 +288,11 @@ const Batches = () => {
     setLoading(true)
     if (day) {
       console.log("Making API call for day:", day);
-    Batch()
+      Batch()
         .then((response) => {
           setDemoDatas(response);
           setDemoDatas1(response);
-setLoading(false)
+          setLoading(false)
 
           console.log(response, "API Response");
         })
@@ -305,45 +328,45 @@ setLoading(false)
       const filteredModules = demoDatas1
         .filter((li) => li.modules && li.modules.length > 0) // Ensure modules exist and have elements
         .map((li) => li.modules[0]); // Get the first element of each module array
-  
+
       setModules(filteredModules); // Set the modules as the array of first elements
     }
   }, [demoDatas1]);
 
-      console.log("modues**",module);
-      console.log("demodatas**",demoDatas1);
-      
-    
-      function filterModule(value){
-        const moduleBatch = demoDatas1.filter((li) => {
-         
-         const data= li.modules.filter((innerData)=>{
-           return innerData.module_name==value
-          })      
-          return data[0]?.module_name==value
-        })
-        setDemoDatas(moduleBatch)
-      }
+  console.log("modues**", module);
+  console.log("demodatas**", demoDatas1);
+
+
+  function filterModule(value) {
+    const moduleBatch = demoDatas1.filter((li) => {
+
+      const data = li.modules.filter((innerData) => {
+        return innerData.module_name == value
+      })
+      return data[0]?.module_name == value
+    })
+    setDemoDatas(moduleBatch)
+  }
 
 
 
   return (
     <MDBContainer fluid>
-      <Navbar1 day={day} filter={setDemoDatas1}/>
+      <Navbar1 day={day} filter={setDemoDatas1} />
       <Navsection2>
         <Leftside2>
           {/* <label style={{ marginLeft: "10px" }} htmlFor=""> */}
           {/* <Datepicker selected={selectedDate} onChange={date => setDate(date)} customInput={<CustomInput />} /> */}
           {/* </label> */}
-          <Link style={{textDecoration:"none"}} to={'/createbatch'}><SpaceGroteskText><span class="material-symbols-outlined m-2">
-add_card
-</span> Add New Batch</SpaceGroteskText></Link>
+          <Link style={{ textDecoration: "none" }} to={'/createbatch'}><SpaceGroteskText><span class="material-symbols-outlined m-2">
+            add_card
+          </span> Add New Batch</SpaceGroteskText></Link>
           <MDBDropdown>
-          <DropDown className='text-white  bg-transparent border-0  py-2 px-4 shadow-none border'>
+            <DropDown className='text-white  bg-transparent border-0  py-2 px-4 shadow-none border'>
               Mentor
             </DropDown>
-            
-         
+
+
             <MDBDropdownMenu>
               {demoDatas1
                 ?.filter((li, index, self) => index === self.findIndex((t) => t.mentor === li.mentor))
@@ -354,6 +377,7 @@ add_card
 
             </MDBDropdownMenu>
           </MDBDropdown>
+
           <MDBDropdown>
             < DropDown className='text-white  bg-transparent border-0  py-2 px-4 shadow-none border'>
               Batch type
@@ -368,7 +392,7 @@ add_card
               Select Module
             </DropDown>
             <MDBDropdownMenu>
-            {module
+              {module
                 ?.filter((li, index, self) => index === self.findIndex((t) => t.module_name === li.module_name))
                 .map((li, index) => (
                   <MDBDropdownItem link key={index} onClick={() => filterModule(li.module_name)}>{li.module_name}</MDBDropdownItem>
@@ -378,7 +402,7 @@ add_card
         </Leftside2>
         <Rightside2>
 
-        <Titles>
+          <Titles>
             <MDBIcon fas icon="home" size='sm' />
             <Link style={{ textDecoration: "none", fontSize: '12px', color: "#411B66", margin: "3px" }} to={'/home'}>Home</Link>
           </Titles>
@@ -396,49 +420,49 @@ add_card
           </Titles>
           <Titles>
             <MDBIcon fas icon="headset" size='sm' />
-            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#411B66", margin: "3px" }} to={'/#'}>Chat</Link>
+            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#411B66", margin: "3px" }} to={'/chat'}>Chat</Link>
           </Titles>
         </Rightside2>
 
       </Navsection2>
       <Message>
-{loading ?
+        {loading ?
 
-<Loading/>
+          <Loading />
 
-:demoDatas1
-  ?.filter((li, index, self) => index === self.findIndex((t) => t.mentor === li.mentor)) // Get unique mentors
-  .sort((a, b) => a.mentor.localeCompare(b.mentor)) // Sort mentors alphabetically
-  .map((mentorData, index) => (
-    <Content className='container' key={index}>
-      {demoDatas // Map over all batches but only display those with the same mentor
-        .filter((batch) => batch.mentor === mentorData.mentor)
-        .map((li) => (
-          <SubMain key={li._id}>
-            <Link style={{ textDecoration: 'none' }} to={`/singlebatch/${li._id}`}>
-            <GlobalStyle/>
-              <AnimatedCard>
-                <MDBCardBody>
-                  <CardTitle className='fs-5'>{li.name}</CardTitle>
-                  <CardText>{li.mentor}</CardText>
-                  <CardText>
-                    {li.batch_code}
-                    <br />
-                    <MDBIcon fas icon="clock" /> {li.start_time} to {li.end_time}
-                  </CardText>
-                  <CardText>
-                    <MDBIcon fas icon="plus" className='text-success' /> {li.students.length} students
-                    <br />
-                  </CardText>
-                </MDBCardBody>
-              </AnimatedCard>
-            </Link>
-          </SubMain>
-        ))}
-    </Content>
-  ))
-}
-</Message>
+          : demoDatas1
+            ?.filter((li, index, self) => index === self.findIndex((t) => t.mentor === li.mentor)) // Get unique mentors
+            .sort((a, b) => a.mentor.localeCompare(b.mentor)) // Sort mentors alphabetically
+            .map((mentorData, index) => (
+              <Content className='container-fluid' key={index}>
+                {demoDatas // Map over all batches but only display those with the same mentor
+                  .filter((batch) => batch.mentor === mentorData.mentor)
+                  .map((li) => (
+                    <SubMain key={li._id}>
+                      <Link style={{ textDecoration: 'none' }} to={`/singlebatch/${li._id}`}>
+                        <GlobalStyle />
+                        <AnimatedCard>
+                          <MDBCardBody>
+                            <CardTitle className='fs-5'>{li.batchName}</CardTitle>
+                            <CardText>{li.mentor}</CardText>
+                            <CardText>
+                              {li.batchCode}
+                              <br />
+                              <MDBIcon fas icon="clock" /> { timeFormat(li.startTime)} to { timeFormat(li.endTime)}
+                            </CardText>
+                            <CardText>
+                              <MDBIcon fas icon="plus" className='text-success' /> {li.students.length} students
+                              <br />
+                            </CardText>
+                          </MDBCardBody>
+                        </AnimatedCard>
+                      </Link>
+                    </SubMain>
+                  ))}
+              </Content>
+            ))
+        }
+      </Message>
     </MDBContainer>
 
   )

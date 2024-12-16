@@ -137,7 +137,7 @@ console.log("Batch details........",Batchdetails);
 </Titles>
 <Titles>
   <MDBIcon fas icon="headset" size='sm' />
-  <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/#'}>Chat</Link>
+  <Link style={{ textDecoration: "none", fontSize: '12px', color: "#ffffff", margin: "3px" }} to={'/chat'}>Chat</Link>
 </Titles>
 </Rightside2>
       </NavSection>

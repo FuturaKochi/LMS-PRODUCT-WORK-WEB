@@ -32,11 +32,11 @@ const Sub = styled.div`
   background-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   @media (max-width: ${breakpoints.mobile}) {
-width: 70%;
+width: 90%;
   }
 
   @media (min-width: ${breakpoints.mobile}) and (max-width: ${breakpoints.tablet}) {
-    width: 70%;
+    width: 80%;
   }
 
   @media (min-width: ${breakpoints.tablet}) and (max-width: ${breakpoints.desktop}) {

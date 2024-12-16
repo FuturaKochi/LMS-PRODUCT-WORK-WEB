@@ -54,9 +54,9 @@ const Navsection2 = styled.div`
 
 const Message = styled.div`
   width: 100%;
-  min-height: 100vh;
-  background: linear-gradient(135deg, rgba(65, 27, 102, 1), rgba(65, 27, 102, 0));
+  height: 83vh;
   padding: 1px;
+  overflow: scroll;
 
 `
 
@@ -86,6 +86,7 @@ const AnimatedCard = styled(MDBCard)`
   background: linear-gradient(135deg, #e5deeb, rgba(255, 255, 255, 1));
   margin-left: 45px;
   margin-right: 45px;
+  border-radius: 50px;
   &:hover {
     &::before {
       content: '';
@@ -350,11 +351,29 @@ const Home = () => {
   }
 
 
+  //time format
+
+  function timeFormat(value){
+ 
+const date = new Date(value);
+
+// Format the time in 12-hour clock with AM/PM
+const formattedTime = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "numeric",
+  hour12: true, // Ensures 12-hour format
+}).format(date);
+
+return formattedTime
+
+  }
+
   return (
 
     <MDBContainer fluid>
       <Navbar1 day={day} filter={setDemoDatas1}/>
       <Navsection2>
+   
         <Leftside2>
           {/* <label style={{ marginLeft: "10px" }} htmlFor=""> */}
           <Datepicker selected={selectedDate} onChange={date => setDate(date)} customInput={<CustomInput />} />
@@ -404,7 +423,7 @@ const Home = () => {
           </Titles>
           <Titles>
             <MDBIcon fas icon="headset" size='sm' />
-            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#411B66", margin: "3px" }} to={'/#'}>Chat</Link>
+            <Link style={{ textDecoration: "none", fontSize: '12px', color: "#411B66", margin: "3px" }} to={'/chat'}>Chat</Link>
           </Titles>
         </Rightside2>
 
@@ -424,20 +443,19 @@ const Home = () => {
                   .filter((batch) => batch.mentor === mentorData.mentor)
                   .map((li) => (
                     <SubMain key={li._id}>
-
-                      <Link style={{ textDecoration: 'none' }} to={`/singlebatch/${li._id}`}>
+                       <Link style={{ textDecoration: 'none' }} to={`/singlebatch/${li._id}`}>
                         <GlobalStyle />
                         <AnimatedCard>
                           <MDBCardBody>
-                            <CardTitle className='fs-5'>{li.name}</CardTitle>
+                            <CardTitle className='fs-5'>{li.batchName}</CardTitle>
                             <CardText >{li.mentor}</CardText>
                             <CardText >
-                              {li.batch_code}
+                              {li.batchCode}
                               <br />
-                              <MDBIcon fas icon="clock" /> {li.start_time} to {li.end_time}
+                              <MDBIcon fas icon="clock" /> { timeFormat(li.startTime)} to { timeFormat(li.endTime)}
                             </CardText>
                             <CardText >
-                              <MDBIcon fas icon="plus" className='text-success' /> {li.student_details.length} students
+                              <MDBIcon fas icon="plus" className='text-success' /> {li.studentDetails.length} students
                               <br />
                             </CardText>
                           </MDBCardBody>
